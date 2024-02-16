@@ -1,0 +1,46 @@
+```python
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Define a function to preprocess the text
+def preprocess_text(text):
+    # Tokenize the text
+    tokens = word_tokenize(text.lower())
+    
+    # Remove stopwords
+    stop_words = set(stopwords.words('english'))
+    filtered_tokens = [token for token in tokens if token not in stop_words]
+    
+    # Stem the tokens
+    ps = PorterStemmer()
+    stemmed_tokens = [ps.stem(token) for token in filtered_tokens]
+    
+    # Join the stemmed tokens back into a single string
+    preprocessed_text = ' '.join(stemmed_tokens)
+    
+    return preprocessed_text
+
+# Define a function to calculate the similarity between two texts
+def calculate_similarity(text1, text2):
+    # Preprocess the texts
+    preprocessed_text1 = preprocess_text(text1)
+    preprocessed_text2 = preprocess_text(text2)
+    
+    # Create TF-IDF vectors
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform([preprocessed_text1, preprocessed_text2])
+    
+    # Calculate cosine similarity
+    similarity = cosine_similarity(tfidf_matrix[0], tfidf_matrix[1])[0][0]
+    
+    return similarity
+
+# Example usage
+text1 = "Original text"
+text2 = "Plagiarized text"
+similarity = calculate_similarity(text1, text2)
+print("Similarity:", similarity)
+```
