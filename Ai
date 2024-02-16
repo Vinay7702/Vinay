@@ -1,0 +1,37 @@
+```python
+import cv2
+
+def detect_obstacles(image):
+    # Convert the image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Apply edge detection to highlight obstacles
+    edges = cv2.Canny(gray, 50, 150)
+
+    # Apply a contour detection algorithm to find obstacles
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Iterate through the detected contours
+    for contour in contours:
+        # Calculate the area of the contour
+        area = cv2.contourArea(contour)
+
+        # Filter out small contours as noise
+        if area > 100:
+            # Draw a bounding rectangle around the obstacle
+            x, y, w, h = cv2.boundingRect(contour)
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+    return image
+
+# Load the input image
+image = cv2.imread('input_image.jpg')
+
+# Detect obstacles in the image
+result = detect_obstacles(image)
+
+# Display the result
+cv2.imshow('Obstacle Detection', result)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
